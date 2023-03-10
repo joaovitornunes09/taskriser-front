@@ -1,24 +1,18 @@
-# teste-fbinfo-front
+#### Front Teste Fabrica Info - Admnistrador de Tarefas -------> João Vitor Raulino Nunes
 
-## Project setup
+##### Sobre tecnologias utilizadas nesse projeto:
+- Vue 3
+- Docker 3.7
+- Vuex 4
+- Vue Router 4.0.3
+
+##### Instalando dependencias:
 ```
 npm install
 ```
+##### Instalação de pacotes e Docker:
 
-### Compiles and hot-reloads for development
+1.Agora vamos iniciar instalação do Docker:
 ```
-npm run serve
+sudo docker-compose up -d --build
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
