@@ -5,6 +5,7 @@
 - Docker 3.7
 - Vuex 4
 - Vue Router 4.0.3
+- Vuetify 3.1.8
 
 ##### Instalando dependencias:
 ```
