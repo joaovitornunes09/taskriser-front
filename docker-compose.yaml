@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  node:
+    container_name: teste-fbinfo-front
+    image: node:12
+    restart: unless-stopped
+    ports:
+      - '9005:8080'
+    volumes:
+      - ./:/srv/app
+    working_dir: /srv/app
+    command: 'npm run serve'
