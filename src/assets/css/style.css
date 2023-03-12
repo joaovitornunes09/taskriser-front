@@ -1,0 +1,15 @@
+:root{
+    --orange-color: #F5821F;
+    --text-color:  #000000;
+}
+body{
+    padding-right: 0 !important;
+}
+
+a{
+    text-decoration: none;
+}
+
+h1{
+    color: #f5821f;
+}

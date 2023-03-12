@@ -1,39 +1,33 @@
 <template>
-   <div>
-    <LayoutComponent :links= "links"></LayoutComponent>
-        <router-view/>
-   </div>
+  <div>
+   <LayoutComponent :links= "links" :linkImage="linkImage"></LayoutComponent>
+       <router-view/>
+       <footer>
+         <div class="pl-5">
+           <p>Created by João Vitor Raulino Nunes. © 2023</p>
+         </div>
+       </footer>
+  </div>
+
 </template>
 <script>
 import LayoutComponent from '@/components/LayoutComponent.vue'
+
 export default {
-  name: 'app',
+ name: 'app',
 
-  components: {
-    LayoutComponent
-  },  
+ components: {
+   LayoutComponent
+ },  
 
-  data() {
-    return {
-      links: [
-      {
-        name: "Login",
-        path: "login"
-      },
-      {
-        name: "Register",
-        path: "register"
-      }
-    ]
-    }
-  },
+ computed: {
+   links(){
+     return this.$store.state.links
+   },
+   linkImage(){
+     return "/"
+   }
+ }
+
 }
 </script>
-<style>
- a { 
-  text-decoration: none; 
-  color: black;
-  display: flex;
-  }
-  
-</style>

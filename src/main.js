@@ -12,6 +12,11 @@ import * as directives from 'vuetify/directives'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap'
+import '@/assets/css/style.css';
+
+
 const vuetify = createVuetify({
   components,
   directives,

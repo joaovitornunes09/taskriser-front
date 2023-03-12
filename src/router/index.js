@@ -1,21 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import HomeView from '../views/HomeView.vue'
+import NewTaskView from '../views/NewTaskView.vue'
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: LoginView
   },
   {
     path: '/register',
     name: 'register',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: RegisterView
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: HomeView
+  },
+  {
+    path: '/form-task',
+    name: 'form-task',
+    component: NewTaskView
   }
+
 ]
 
 const router = createRouter({
