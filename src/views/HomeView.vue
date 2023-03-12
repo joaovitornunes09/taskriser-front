@@ -2,14 +2,14 @@
   <v-container style="height: 46vw; display: flex;">
     <v-col align-self="center">
       <v-row>
-        <h1 class="mx-auto mb-9">Admin Panel</h1>
+        <h1 class="mx-auto mb-9">{{ type_user === '1' ? 'Admin Panel' : 'Tasks'  }}</h1>
       </v-row>
       <v-row>
         <div id="wrapper"></div>
       </v-row>
       <router-link to="/form-task">
         <v-row class="mt-3">
-          <v-btn block color="#F5821F" class="btn-create">New task</v-btn>
+          <v-btn v-if="type_user === '1'" block color="#F5821F" class="btn-create">New task</v-btn>
         </v-row>
       </router-link>
     </v-col>
@@ -27,16 +27,22 @@ export default {
   name: "HomeView",
   data() { 
     return {
-       grid: new Grid() 
+       grid: new Grid() ,
+       type_user: Cookies.get("user_type")
       } 
     },
   methods: {
     changeLinks(){
       this.$store.dispatch("changeLinks", this.$route.name);
+    },
+    teste() {
+      console.log("teste");
     }
   },
-  mounted() {
+  beforeMount() {
     this.changeLinks();
+  },
+  mounted() {
     this.grid.updateConfig({
             columns: [
                 {
@@ -55,10 +61,10 @@ export default {
                 name: 'Actions',
                 formatter: (cell) => html(`
                   <div class="d-grid gap-2 d-md-block">
-                    <button class="btn btn-success ${cell.status === "Finished" ? "d-none" : ""}" id="${cell}"  type="button">Finish</button>
-                    <button class="btn btn-warning" id="${cell.id}"type="button">Edit</button>
-                    <button class="btn btn-danger" id="${cell.id}"type="button">Exclude</button>
-                    <button class="btn btn-primary" id="${cell.id}"type="button">Details</button>
+                    <button title="Finish" @click="teste" class="btn btn-success ${cell.status === "Finished" || (cell.assigned_to !== Cookies.get("name") && this.type_user === '2')  ? "d-none" : ""}" id="${cell.id}"  type="button">Finish</button>
+                    <a href="/edit" title="Edit" class="btn btn-warning ${this.type_user === '2' ? 'd-none' : ''}" id="${cell.id}"type="button">Edit</a>
+                    <button title="Details" class="btn btn-primary" id="${cell.id}"type="button">Details</button>
+                    <button title="Exclude" class="btn btn-danger ${this.type_user === '2' ? 'd-none' : ''}" id="${cell.id}"  type="button">Exclude</button>
                   </div>
                 `)
                 }
@@ -69,7 +75,6 @@ export default {
               limit: 4
             },
             search: true,
-            resizable: true,
             sort: true,
             server: {
                 url: 'http://localhost:8989/api/task/user',
@@ -84,7 +89,8 @@ export default {
                     task.complete_until,
                     {
                       id: task.id,
-                      status: task.status
+                      status: task.status,
+                      assigned_to: task.assigned_to
                     }
                 ])
                 
@@ -102,10 +108,9 @@ export default {
       className: {
         table:'table-responsive'
       }
-        }).render(document.getElementById("wrapper"));
+    }).render(document.getElementById("wrapper"));
   }
 };
-
 
 </script>
 

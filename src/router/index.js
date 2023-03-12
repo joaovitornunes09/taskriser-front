@@ -3,6 +3,7 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import HomeView from '../views/HomeView.vue'
 import NewTaskView from '../views/NewTaskView.vue'
+import EditTaskView from '../views/EditView.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/form-task',
     name: 'form-task',
     component: NewTaskView
+  },
+  {
+    path: '/edit',
+    name: 'edit-task',
+    component: EditTaskView
   }
 
 ]
