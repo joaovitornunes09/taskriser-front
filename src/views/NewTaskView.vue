@@ -6,7 +6,11 @@
       </v-row>
       <v-row>
         <v-sheet width="800" class="mx-auto">
-          <v-form ref="formTask" fast-fail @submit.prevent @submit="createNewTask()">
+          <v-form 
+            ref="formTask" 
+            fast-fail 
+            @submit.prevent="verifyForm()" 
+          >
             <v-row>
               <v-text-field
                 label="Title"
@@ -38,7 +42,7 @@
               <v-text-field
                 type="date"
                 label="Complete until"
-                v-model="complete_until"
+                v-model="formNewTask.complete_until"
                 hint="Set a deadline for this task."
                 persistent-hint
               ></v-text-field>
@@ -101,7 +105,6 @@ export default {
           },
         ],
       },
-      validateForm: false,
       formNewTask: {
         title: "",
         visibility: {
@@ -113,15 +116,13 @@ export default {
         description: "",
         user: "",
         status: 1,
+        complete_until: ""
       }
     };
   },
   computed: {
     users(){
       return store.state.users;
-    },
-    complete_until() {
-      return store.state.currentDate;
     }
   },
   methods: {
@@ -129,8 +130,30 @@ export default {
       this.$store.dispatch("changeLinks", this.$route.name);
     },
 
-    getUsers() {
-      this.$store.dispatch("getAllUsers");
+    async getUsers() {
+      try {
+        await this.$store.dispatch("getAllUsers");
+      } catch (error) {
+        if (error.response.status === 401) {
+          this.$swal
+            .fire({
+              title: "Session expired!",
+              text: "Please login again",
+              icon: "error",
+              timer: "2000",
+            })
+            .then(() => {
+              Cookies.remove("access_token");
+              Cookies.remove("user_type");
+              Cookies.remove("user_id");
+              Cookies.remove("name");
+              Cookies.remove("login");
+              Cookies.remove("email");
+              this.$router.push({ name: "login" });
+            });
+        }
+      }
+      
     },
     getCurrentDate(){
       this.$store.dispatch("getCurrentDate")
@@ -138,31 +161,30 @@ export default {
 
     verifyForm() {
       this.$refs.formTask.validate().then(response => {
-        this.validateForm = response.valid;
+        if(response.valid){
+          this.createNewTask();
+        }
       })
     },
 
     createNewTask() {
+     
       const taskData = {
         title: this.formNewTask.title,
         description: this.formNewTask.description,
         visible_to_all: this.formNewTask.visibility.value,
         status: this.formNewTask.status,
-        complete_until: this.complete_until,
+        complete_until: this.formNewTask.complete_until,
         assigned_to: this.formNewTask.user,
       };
-
+      
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("access_token")}`,
         Accept: "application/json",
       };
-
-      this.verifyForm();
-
-      if (this.validateForm) {
         api
-          .post("/task/register", taskData, {
+          .post("/task/register", JSON.stringify(taskData), {
             headers: headers,
           })
           .then((response) => {
@@ -178,13 +200,22 @@ export default {
             }
           })
           .catch((error) => {
+            console.log(error);
             this.$swal({
             icon: "error",
-            title: error.response.data.message,
-            text: "Please enter another title or delete the task with the title you want before creating a new one.",
+            title: error.response.data.message
+          }).then(()=> {
+            if(error.response.status === 401 ){
+              Cookies.remove("access_token");
+              Cookies.remove("user_type");
+              Cookies.remove("user_id");
+              Cookies.remove("name");
+              Cookies.remove("login");
+              Cookies.remove("email");
+              this.$router.push({ name: "login" });
+            }
           });
           });
-      }
     },
   },
   beforeMount() {

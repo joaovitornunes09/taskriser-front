@@ -9,8 +9,7 @@
           <v-form
             ref="formUpdateTask"
             fast-fail
-            @submit.prevent
-            @submit="updateTask()"
+            @submit.prevent="verifyForm()"
           >
             <v-row>
               <v-text-field
@@ -113,8 +112,7 @@ export default {
             return "This field is required.";
           },
         ],
-      },
-      validateForm: false,
+      }
     };
   },
   computed: {
@@ -138,19 +136,15 @@ export default {
       this.$store.dispatch("getTask", this.taskId);
     },
 
-    getCurrentDate() {
-      this.$store.dispatch("getCurrentDate");
-    },
-
     verifyForm() {
       this.$refs.formUpdateTask.validate().then((response) => {
-        this.validateForm = response.valid;
+        if(response.valid){
+          this.updateTask();
+        };
       });
     },
 
     updateTask() {
-      this.verifyForm();
-
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("access_token")}`,
@@ -163,10 +157,10 @@ export default {
         complete_until: this.task.complete_until,
         assigned_to: this.task.assigned_to.name,
       };
-      if (this.validateForm) {
         api
           .put(`/task/update/${this.taskId}`, taskData, { headers: headers })
           .then((response) => {
+            console.log(response);
             if (response.data.data.status) {
               this.$swal({
                 icon: "success",
@@ -177,13 +171,12 @@ export default {
             }
           })
           .catch((error) => {
-            console.log(error);
+            this.$swal({
+              icon: 'error',
+              title:  error.response.data.message
+            })
           });
-      }
     }
-  },
-  mounted() {
-    this.getCurrentDate();
   },
   beforeMount() {
     

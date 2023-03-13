@@ -119,7 +119,6 @@ export default {
           })
           
         }).catch(error => {
-          console.log(error);
           this.$swal({
             icon: 'error',
             title:  error.response.data.message

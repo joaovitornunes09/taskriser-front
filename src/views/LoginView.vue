@@ -88,7 +88,6 @@ export default {
             text: response.data.data.user.name,
             timer: 2000,
           }).then(() => {
-            console.log(response);
             Cookies.set("access_token", response.data.data.access_token);
             Cookies.set("email", response.data.data.user.email);
             Cookies.set("login", response.data.data.user.login);

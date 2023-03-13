@@ -10,7 +10,10 @@
       <v-toolbar-items>
         <nav v-for="link in links" :key="link.name" style="display: flex;">
           <router-link :to="link.path !== '/' ? link.path : ''" >
-            <v-btn @click="link.name === 'Logout' ? logout() : ''">{{ link.name }}</v-btn>
+            <v-btn :title="link.name" @click="link.name === 'Logout' ? logout() : ''">
+              {{ link.icon ? "" : link.name  }}
+              <v-icon v-if="link.icon" size="large">{{ link.icon}}</v-icon>
+            </v-btn>
           </router-link>
         </nav>
       </v-toolbar-items>

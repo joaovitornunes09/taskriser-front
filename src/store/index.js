@@ -29,8 +29,9 @@ export default createStore({
             path: "home",
           },
           {
-            name: "Logout",
+            name: `Logout`,
             path: "/",
+            icon: `mdi-logout`
           },
         ];
         state.linkImage = "/home";
@@ -60,11 +61,12 @@ export default createStore({
       state.tasks = response;
     },
     setTask(state, task){
-      console.log(task);
-      const dataSplit = task.complete_until.split("/");
-      const data = new Date(dataSplit[2], dataSplit[1]-1, dataSplit[0]);
-      let dataFormatada = data.getFullYear() + '-' + (data.getMonth()+1).toString().padStart(2, '0') + '-' + data.getDate().toString().padStart(2, '0');
-      task.complete_until = dataFormatada;
+      if(task.complete_until){
+        const dataSplit = task.complete_until.split("/");
+        const data = new Date(dataSplit[2], dataSplit[1]-1, dataSplit[0]);
+        let dataFormatada = data.getFullYear() + '-' + (data.getMonth()+1).toString().padStart(2, '0') + '-' + data.getDate().toString().padStart(2, '0');
+        task.complete_until = dataFormatada;
+      }
 
       if(!task.visible_to_all){
         task.visibility = {
@@ -101,16 +103,22 @@ export default createStore({
       commit("setCurrentDate",today) ;
     },
 
-    getAllUsers({ commit }) {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("access_token")}`,
-        Accept: "application/json",
-      };
-
-      api.get("/user/list", { headers: headers }).then((response) => {
-        commit("setUsers", response.data.data);
-      });
+    async getAllUsers({ commit }) {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
+          Accept: "application/json",
+        };
+  
+        const response = await api.get("/user/list", { headers: headers }).then((response) => {
+          commit("setUsers", response.data.data);
+          return response
+        });
+      } catch (error) {
+        throw error
+      }
+      
     },
 
     async getTasks({ commit }) {

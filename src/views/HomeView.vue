@@ -34,6 +34,7 @@
               size="large"
               color="green"
               class="me-2"
+              title="Finish"
               @click="finishTask(item.raw)"
             >
               mdi-check-circle
@@ -44,12 +45,13 @@
               size="large"
               color="blue"
               class="me-2"
+              title="Edit"
               @click="editTask(item.raw)"
             >
               mdi-pencil
             </v-icon>
 
-            <v-icon size="large" @click="showDetails(item.raw)">
+            <v-icon size="large" title="Details" @click="showDetails(item.raw)">
               mdi-information
             </v-icon>
 
@@ -57,6 +59,7 @@
               v-if="type_user === '1'"
               size="large"
               color="red"
+              title="Exclude"
               @click="showDeleteItemModal(item.raw)"
             >
               mdi-delete
@@ -120,7 +123,10 @@ export default {
       try {
         this.$store.dispatch("changeLinks");
       } catch (error) {
-        console.log(error);
+        this.$swal({
+            icon: 'error',
+            title:  error.response.data.message
+          })
       }
     },
     async getTasks() {
@@ -235,7 +241,10 @@ export default {
           });
         })
         .catch((error) => {
-          console.log(error);
+          this.$swal({
+            icon: 'error',
+            title:  error.response.data.message
+          })
         });
     },
     finishTask(task) {
@@ -268,7 +277,10 @@ export default {
                 title: `Task "${task.title}" is now finished`,
               });
             }).catch(error => {
-              console.log(error);
+              this.$swal({
+            icon: 'error',
+            title:  error.response.data.message
+          })
             });
         }
       });
