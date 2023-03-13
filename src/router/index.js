@@ -3,7 +3,7 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import HomeView from '../views/HomeView.vue'
 import NewTaskView from '../views/NewTaskView.vue'
-import EditTaskView from '../views/EditView.vue'
+import UpdateTaskView from '../views/UpdateTaskView.vue'
 
 const routes = [
   {
@@ -27,9 +27,10 @@ const routes = [
     component: NewTaskView
   },
   {
-    path: '/edit',
+    path: '/update/:taskId',
     name: 'edit-task',
-    component: EditTaskView
+    props: true,
+    component: UpdateTaskView
   }
 
 ]

@@ -1,72 +1,108 @@
-import { createStore } from 'vuex'
+import { createStore } from "vuex";
 import api from "@/configs/api";
 import Cookies from "js-cookie";
+
 export default createStore({
   state: {
     links: [
       {
         name: "Login",
-        path: "/"
+        path: "/",
       },
       {
         name: "Register",
-        path: "register"
-      }
+        path: "register",
+      },
     ],
-    linkImage: '/',
-    users: []
+    linkImage: "/",
+    users: [],
+    tasks: [],
+    task: [],
   },
-  getters: {
-  },
+  getters: {},
   mutations: {
-    changeLinks(state, response){
-      if(response !== 'login' || response !== 'register'){
+    changeLinks(state) {
         state.links = [
           {
-            name:  "Home",
-            path: "home"
+            name: "Home",
+            path: "home",
           },
           {
-            name:  "My tasks",
-            path: "home"
+            name: "Logout",
+            path: "/",
           },
-          {
-            name:  "Logout",
-            path: "/"
-          }
         ];
         state.linkImage = "/home";
-      }
+    },
+    resetLinks(state){
+      state.links = [
+        {
+          name: "Login",
+          path: "/",
+        },
+        {
+          name: "Register",
+          path: "register",
+        },
+      ];
+      state.linkImage =  "/";
     },
 
-    setUsers(state, response){
+    setUsers(state, response) {
       state.users = response;
-    }
+    },
 
+    setTasks(state, response) {
+      state.tasks = response;
+    },
+    setTask(state, task){
+      state.task = task;
+    }
   },
 
   actions: {
 
-    changeLinks({commit}, infoLinks) {
-      commit("changeLinks", infoLinks);
+    changeLinks({ commit }) {
+      commit("changeLinks");
+    },
+    resetLinks( {commit} ) {
+      commit("resetLinks");
     },
 
-    getAllUsers({commit}) {
-      console.log(commit);
+    getAllUsers({ commit }) {
       const headers = {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${Cookies.get("access_token")}`,
+        Authorization: `Bearer ${Cookies.get("access_token")}`,
         Accept: "application/json",
       };
 
-      api.get("/user/list", {headers: headers})
-        .then(response => {
-          commit("setUsers",response.data.data);
-        })
-    }
+      api.get("/user/list", { headers: headers }).then((response) => {
+        commit("setUsers", response.data.data);
+      });
+    },
 
+    async getTasks({ commit }) {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
+          Accept: "application/json",
+        };
+
+        const response = await api.get("/task/user", { headers: headers });
+
+        commit("setTasks", response.data.data);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    setTask({commit}, task){
+      commit("setTask", task);
+    }
+    
   },
 
-  modules: {
-  }
-})
+  modules: {},
+});

@@ -3,9 +3,13 @@
    <LayoutComponent :links= "links" :linkImage="linkImage"></LayoutComponent>
        <router-view/>
        <footer>
-         <div class="pl-5">
+        <v-container>
+          <v-col align-self="end">
+            <v-row class="mt-2">
            <p>Created by João Vitor Raulino Nunes. © 2023</p>
-         </div>
+            </v-row>
+          </v-col>
+        </v-container>
        </footer>
   </div>
 

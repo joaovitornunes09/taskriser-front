@@ -64,6 +64,10 @@ export default {
   }),
 
   methods: {
+    resetLinks() {
+      this.$store.dispatch('resetLinks');
+    },
+
     userLogin() {
       const headers = {
         "Content-Type": "application/json",
@@ -103,6 +107,9 @@ export default {
         });
     },
   },
+  beforeMount() {
+    this.resetLinks();
+  }
 };
 </script>
 

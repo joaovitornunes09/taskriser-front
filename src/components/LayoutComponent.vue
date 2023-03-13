@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-8">
     <v-toolbar :elevation="8">
       <v-toolbar-side-icon>
         <router-link :to="linkImage">
@@ -9,8 +9,8 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <nav v-for="link in links" :key="link.name" style="display: flex;">
-          <router-link :to=link.path>
-            <v-btn>{{ link.name }}</v-btn>
+          <router-link :to="link.path !== '/' ? link.path : ''" >
+            <v-btn @click="link.name === 'Logout' ? logout() : ''">{{ link.name }}</v-btn>
           </router-link>
         </nav>
       </v-toolbar-items>
@@ -20,11 +20,38 @@
 </template>
 
 <script>
+import Cookies from "js-cookie";
+import api from "@/configs/api";
+
 export default {
 name: 'LayoutComponent',
 props: {
   links: Array,
   linkImage: String
+},
+methods: {
+  logout(){
+    api.get("/logout", {
+      headers: {
+        "Authorization": `Bearer ${Cookies.get("access_token")}`
+      }
+    }).then(response => {
+      this.$swal.fire({
+                        title: "Successfully logged out",
+                        text: `See you soon ${Cookies.get("name")}`,
+                        icon: "success",
+                        timer: "2000"
+                    }).then(() => {
+                        Cookies.remove("access_token");
+                        Cookies.remove("user_type");
+                        Cookies.remove("user_id");
+                        Cookies.remove("name");
+                        Cookies.remove("login");
+                        Cookies.remove("email");
+                        this.$router.push({ name: "login" });
+                    })
+    })
+  }
 }
 }
 </script>
