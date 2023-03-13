@@ -10,26 +10,25 @@
             <v-row>
               <v-text-field
                 label="Title"
-                v-model="title"
+                v-model="formNewTask.title"
                 :rules="rules.required"
               ></v-text-field>
             </v-row>
             <v-row class="gap-4 mb-2">
               <v-select
-                v-model="user"
+                v-model="formNewTask.user"
                 :items="users"
                 item-title="name"
-                item-value="user_id"
+                item-value="name"
                 label="Assign To"
-                return-object
                 class="w-25"
               ></v-select>
               <v-select
-                v-model="visibility"
+                v-model="formNewTask.visibility"
                 :items="items"
                 item-title="type"
                 item-value="value"
-                :hint="`${visibility.hint}`"
+                :hint="`${formNewTask.visibility.hint}`"
                 label="Visibility"
                 persistent-hint
                 return-object
@@ -46,7 +45,7 @@
             </v-row>
             <v-row>
               <v-textarea
-                v-model="description"
+                v-model="formNewTask.description"
                 label="Description"
                 auto-grow
                 rows="3"
@@ -78,13 +77,7 @@ export default {
   name: "NewTaskView",
   data() {
     return {
-      title: "",
-      visibility: {
-        type: "Default",
-        value: false,
-        hint:
-          "This will make this task visible only to you and whoever you assigned it.",
-      },
+      
       items: [
         {
           type: "Default",
@@ -99,8 +92,6 @@ export default {
         },
       ],
       
-      complete_until: new Date(),
-      description: "",
       rules: {
         required: [
           (value) => {
@@ -110,12 +101,27 @@ export default {
           },
         ],
       },
-      validateForm: false
+      validateForm: false,
+      formNewTask: {
+        title: "",
+        visibility: {
+          type: "Default",
+          value: false,
+          hint:
+          "This will make this task visible only to you and whoever you assigned it.",
+        },
+        description: "",
+        user: "",
+        status: 1,
+      }
     };
   },
   computed: {
     users(){
       return store.state.users;
+    },
+    complete_until() {
+      return store.state.currentDate;
     }
   },
   methods: {
@@ -126,6 +132,9 @@ export default {
     getUsers() {
       this.$store.dispatch("getAllUsers");
     },
+    getCurrentDate(){
+      this.$store.dispatch("getCurrentDate")
+    },
 
     verifyForm() {
       this.$refs.formTask.validate().then(response => {
@@ -135,12 +144,12 @@ export default {
 
     createNewTask() {
       const taskData = {
-        title: this.title,
-        description: this.description,
-        visible_to_all: this.visibility.value,
-        status: 1,
+        title: this.formNewTask.title,
+        description: this.formNewTask.description,
+        visible_to_all: this.formNewTask.visibility.value,
+        status: this.formNewTask.status,
         complete_until: this.complete_until,
-        assigned_to: this.user.name,
+        assigned_to: this.formNewTask.user,
       };
 
       const headers = {
@@ -150,7 +159,7 @@ export default {
       };
 
       this.verifyForm();
-      
+
       if (this.validateForm) {
         api
           .post("/task/register", taskData, {
@@ -164,17 +173,22 @@ export default {
                 text: `Welcome ${response.data.data.name}!`,
                 timer: 2000,
               }).then(() => {
-                this.$refs.form.resetValidation();
+                this.$refs.formTask.resetValidation();
               });
             }
           })
           .catch((error) => {
-            console.log(error);
+            this.$swal({
+            icon: "error",
+            title: error.response.data.message,
+            text: "Please enter another title or delete the task with the title you want before creating a new one.",
+          });
           });
       }
     },
   },
   beforeMount() {
+    this.getCurrentDate();
     this.changeLinks();
     this.getUsers();
   },

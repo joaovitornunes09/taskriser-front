@@ -14,6 +14,7 @@ export default createStore({
         path: "register",
       },
     ],
+    currentDate: "",
     linkImage: "/",
     users: [],
     tasks: [],
@@ -33,6 +34,9 @@ export default createStore({
           },
         ];
         state.linkImage = "/home";
+    },
+    setCurrentDate(state, date){
+      state.currentDate = date;
     },
     resetLinks(state){
       state.links = [
@@ -56,6 +60,27 @@ export default createStore({
       state.tasks = response;
     },
     setTask(state, task){
+      console.log(task);
+      const dataSplit = task.complete_until.split("/");
+      const data = new Date(dataSplit[2], dataSplit[1]-1, dataSplit[0]);
+      let dataFormatada = data.getFullYear() + '-' + (data.getMonth()+1).toString().padStart(2, '0') + '-' + data.getDate().toString().padStart(2, '0');
+      task.complete_until = dataFormatada;
+
+      if(!task.visible_to_all){
+        task.visibility = {
+          type: "Default",
+          value: false,
+          hint:
+            "This will make this task visible only to you and whoever you assigned it.",
+        }
+      }
+      if(task.visible_to_all){
+        task.visibility = {
+          type: "All",
+          value: true,
+          hint: "This will make this task visible to all application users. ",
+        }
+      }
       state.task = task;
     }
   },
@@ -67,6 +92,13 @@ export default createStore({
     },
     resetLinks( {commit} ) {
       commit("resetLinks");
+    },
+    getCurrentDate({commit}) {
+      const now = new Date();
+      const day = ("0" + now.getDate()).slice(-2);
+      const month =  ("0" + (now.getMonth() + 1)).slice(-2);
+      const today = now.getFullYear()+"-"+(month)+"-"+(day);
+      commit("setCurrentDate",today) ;
     },
 
     getAllUsers({ commit }) {
@@ -98,8 +130,20 @@ export default createStore({
       }
     },
 
-    setTask({commit}, task){
-      commit("setTask", task);
+    async getTask({commit}, taskId){
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
+          Accept: "application/json",
+        };
+
+        const response = await api.get(`/task/list/${taskId}`, { headers: headers });
+        commit("setTask", response.data.data);
+        return response;
+      } catch (error) {
+        throw error;
+      }
     }
     
   },

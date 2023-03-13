@@ -82,6 +82,7 @@ export default {
         login: '',
         email: '',
         password: '',
+        user_type: 2
       }
     }),
 
@@ -113,7 +114,7 @@ export default {
               Cookies.set("email", response.data.data.user.email);
               Cookies.set("login", response.data.data.user.login);
               Cookies.set("name", response.data.data.user.name);
-              this.$router.push({ name: '/home' });
+              this.$router.push({ name: 'home' });
             })
           })
           

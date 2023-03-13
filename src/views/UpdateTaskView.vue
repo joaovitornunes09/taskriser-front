@@ -7,7 +7,7 @@
       <v-row>
         <v-sheet width="800" class="mx-auto">
           <v-form
-            ref="formTask"
+            ref="formUpdateTask"
             fast-fail
             @submit.prevent
             @submit="updateTask()"
@@ -62,7 +62,7 @@
             </v-row>
 
             <v-btn type="submit" block color="#F5821F" rounded class="mt-2"
-              >Create</v-btn
+              >Edit</v-btn
             >
           </v-form>
           <router-link style="color: black !important;" to="/home">
@@ -104,8 +104,6 @@ export default {
           hint: "This will make this task visible to all application users. ",
         },
       ],
-
-      complete_until: new Date(),
       description: "",
       rules: {
         required: [
@@ -136,11 +134,20 @@ export default {
       this.$store.dispatch("getAllUsers");
     },
 
+    getTask(){
+      this.$store.dispatch("getTask", this.taskId);
+    },
+
+    getCurrentDate() {
+      this.$store.dispatch("getCurrentDate");
+    },
+
     verifyForm() {
-      this.$refs.formTask.validate().then((response) => {
+      this.$refs.formUpdateTask.validate().then((response) => {
         this.validateForm = response.valid;
       });
     },
+
     updateTask(data) {
       this.verifyForm();
 
@@ -151,15 +158,14 @@ export default {
       };
       if (this.validateForm) {
         api
-          .put(`/task/update/${data.id}`, data, { headers: headers })
+          .put(`/task/update/${this.taskId}`, data, { headers: headers })
           .then((response) => {
             if (response.data.data.status) {
               this.$swal({
                 icon: "success",
-                title: "Task created successfully.",
-                timer: 2000,
+                title: "Task updated successfully."
               }).then(() => {
-                this.$refs.form.resetValidation();
+                this.$router.push({ name: '/home' });
               });
             }
           })
@@ -169,9 +175,14 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getCurrentDate();
+  },
   beforeMount() {
+    
     this.changeLinks();
     this.getUsers();
+    this.getTask();
   }
 };
 </script>

@@ -127,7 +127,6 @@ export default {
       try {
         await this.$store.dispatch("getTasks");
       } catch (error) {
-        console.log(error);
         if (error.response.status === 401) {
           this.$swal
             .fire({
@@ -148,28 +147,63 @@ export default {
         }
       }
     },
-    showDeleteItemModal(item) {
+    showDeleteItemModal(task) {
       this.$swal({
         icon: "warning",
-        title: `Are you sure you want to delete this task?`,
-        html: `
-                    <form>
-                      <div class="mb-3">
-                        <label for="title" class="form-label fw-bold">Title</label>
-                        <input type="text" disabled  value="${item.title}" class="form-control">
+        title: `Are you sure you want to delete ${task.title}`,
+        html: `<form>
+                      <div class="container">
+                      <div class="col">
+                        <div class="row">
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Created By</label>
+                            <input type="text" disabled  value="${
+                              task.created_by
+                            }" class="form-control">
+                          </div>
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Assigned To</label>
+                            <input type="text" disabled  value="${
+                              task.assigned_to
+                            }" class="form-control">
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Status</label>
+                            <input type="text" disabled  value="${
+                              task.status
+                            }" class="form-control">
+                          </div>
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Complete until</label>
+                            <input type="text" disabled  value="${
+                              task.complete_until
+                            }" class="form-control">
+                          </div>
+                        </div>
+                        <div class="row ${task.completed_in ? "" : "d-none"}">
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Completed By</label>
+                            <input type="text" disabled  value="${
+                              task.completed_by
+                            }" class="form-control">
+                          </div>
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Completed In</label>
+                            <input type="text" disabled  value="${
+                              task.completed_in
+                            }" class="form-control">
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <label for="title" class="form-label fw-bold">Description</label>
+                          <textarea class="form-control"  disabled style="height: 100px">${
+                            task.description
+                          }</textarea>
+                        </div>
                       </div>
-                      <div class="mb-3">
-                        <label for="title" class="form-label fw-bold">Assigned To</label>
-                        <input type="text" disabled  value="${item.assigned_to}" class="form-control">
                       </div>
-                      <div class="mb-3">
-                        <label for="title" class="form-label fw-bold">Status</label>
-                        <input type="text" disabled  value="${item.status}" class="form-control">
-                      </div>
-                      <div class="mb-3">
-                        <label for="title" class="form-label fw-bold">Description</label>
-                        <textarea class="form-control"  disabled style="height: 100px">${item.description}</textarea>
-                    </div>
                     </form>`,
         showConfirmButton: true,
         confirmButtonText: "Delete",
@@ -179,7 +213,7 @@ export default {
         cancelButtonColor: "grey",
       }).then((confirm) => {
         if (confirm.isConfirmed) {
-          this.deleteItem(item.id);
+          this.deleteItem(task.id);
         }
       });
     },
@@ -195,7 +229,7 @@ export default {
         .then((response) => {
           this.$store.dispatch("getTasks");
           this.$swal({
-            icon: "Success",
+            icon: "success",
             title: "Success",
             text: "Successfully deleted task",
           });
@@ -204,14 +238,47 @@ export default {
           console.log(error);
         });
     },
+    finishTask(task) {
+      this.$swal({
+        icon: "info",
+        title: `Mark task as finished?`,
+        text: task.title,
+        showConfirmButton: true,
+        confirmButtonText: "Confirm",
+        confirmButtonColor: "#F5821F",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+      }).then((confirm) => {
+        if (confirm.isConfirmed) {
+          api
+            .put(
+              `/task/update/${task.id}`,
+              { status: 3 },
+              {
+                headers: {
+                  accept: "application/json",
+                  Authorization: `Bearer ${Cookies.get("access_token")}`,
+                },
+              }
+            )
+            .then(() => {
+              this.$store.dispatch("getTasks");
+              this.$swal({
+                icon: "success",
+                title: `Task "${task.title}" is now finished`,
+              });
+            }).catch(error => {
+              console.log(error);
+            });
+        }
+      });
+    },
 
     editTask(task) {
-      this.$store.dispatch("setTask", task);
       this.$router.push({ name: "edit-task", params: { taskId: task.id } });
     },
 
     showDetails(task) {
-      console.log(task);
       this.$swal({
         title: task.title,
         html: `
@@ -221,26 +288,50 @@ export default {
                         <div class="row">
                           <div class="mb-3 w-50">
                             <label for="title" class="form-label fw-bold">Created By</label>
-                            <input type="text" disabled  value="${task.created_by}" class="form-control">
+                            <input type="text" disabled  value="${
+                              task.created_by
+                            }" class="form-control">
                           </div>
                           <div class="mb-3 w-50">
                             <label for="title" class="form-label fw-bold">Assigned To</label>
-                            <input type="text" disabled  value="${task.assigned_to}" class="form-control">
+                            <input type="text" disabled  value="${
+                              task.assigned_to
+                            }" class="form-control">
                           </div>
                         </div>
                         <div class="row">
                           <div class="mb-3 w-50">
                             <label for="title" class="form-label fw-bold">Status</label>
-                            <input type="text" disabled  value="${task.status}" class="form-control">
+                            <input type="text" disabled  value="${
+                              task.status
+                            }" class="form-control">
                           </div>
                           <div class="mb-3 w-50">
                             <label for="title" class="form-label fw-bold">Complete until</label>
-                            <input type="text" disabled  value="${task.complete_until}" class="form-control">
+                            <input type="text" disabled  value="${
+                              task.complete_until
+                            }" class="form-control">
+                          </div>
+                        </div>
+                        <div class="row ${task.completed_in ? "" : "d-none"}">
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Completed By</label>
+                            <input type="text" disabled  value="${
+                              task.completed_by
+                            }" class="form-control">
+                          </div>
+                          <div class="mb-3 w-50">
+                            <label for="title" class="form-label fw-bold">Completed In</label>
+                            <input type="text" disabled  value="${
+                              task.completed_in
+                            }" class="form-control">
                           </div>
                         </div>
                         <div class="mb-3">
                           <label for="title" class="form-label fw-bold">Description</label>
-                          <textarea class="form-control"  disabled style="height: 100px">${task.description}</textarea>
+                          <textarea class="form-control"  disabled style="height: 100px">${
+                            task.description
+                          }</textarea>
                         </div>
                       </div>
                       </div>
@@ -273,5 +364,4 @@ a:hover {
   max-height: 85vh;
   overflow-y: auto;
 }
-
 </style>
