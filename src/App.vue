@@ -29,7 +29,7 @@ export default {
      return this.$store.state.links
    },
    linkImage(){
-     return "/"
+     return this.$store.state.linkImage
    }
  }
 
