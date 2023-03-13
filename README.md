@@ -1,7 +1,7 @@
 #### Front Teste Fabrica Info - Admnistrador de Tarefas -------> João Vitor Raulino Nunes
 
 ##### Sobre tecnologias utilizadas nesse projeto:
-- Vue 3
+- Vue 3.2.36
 - Docker 3.7
 - Vuex 4
 - Vue Router 4.0.3

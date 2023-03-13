@@ -148,7 +148,7 @@ export default {
       });
     },
 
-    updateTask(data) {
+    updateTask() {
       this.verifyForm();
 
       const headers = {
@@ -156,16 +156,23 @@ export default {
         Authorization: `Bearer ${Cookies.get("access_token")}`,
         Accept: "application/json",
       };
+      const taskData = {
+        title: this.task.title,
+        description: this.task.description,
+        visible_to_all: this.task.visibility.value,
+        complete_until: this.task.complete_until,
+        assigned_to: this.task.assigned_to.name,
+      };
       if (this.validateForm) {
         api
-          .put(`/task/update/${this.taskId}`, data, { headers: headers })
+          .put(`/task/update/${this.taskId}`, taskData, { headers: headers })
           .then((response) => {
             if (response.data.data.status) {
               this.$swal({
                 icon: "success",
                 title: "Task updated successfully."
               }).then(() => {
-                this.$router.push({ name: '/home' });
+                this.$router.push({ name: 'home' });
               });
             }
           })
