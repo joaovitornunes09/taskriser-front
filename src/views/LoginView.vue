@@ -6,7 +6,7 @@
       </v-row>
       <v-row>
         <v-sheet width="300" class="mx-auto">
-          <v-form v-model="formLogin" fast-fail @submit.prevent="userLogin">
+          <v-form ref="formLogin" v-model="formLogin" fast-fail @submit.prevent="verifyForm()">
             <v-text-field
               v-model="login"
               label="Login"
@@ -67,12 +67,21 @@ export default {
     resetLinks() {
       this.$store.dispatch('resetLinks');
     },
+    verifyForm() {
+      this.$refs.formLogin.validate().then(response => {
+        if(response.valid){
+          this.userLogin();
+        }
+      })
+    },
 
     userLogin() {
       const headers = {
         "Content-Type": "application/json",
         Accept: "application/json",
       };
+
+     
 
       const data = {
         login: this.login,

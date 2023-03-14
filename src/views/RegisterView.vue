@@ -7,7 +7,7 @@
       </v-row>
       <v-row>
         <v-sheet width="300" class="mx-auto">
-          <v-form fast-fail @submit.prevent="userRegister">
+          <v-form fast-fail ref="formRegister" @submit.prevent="verifyForm()">
             <v-text-field
               v-model="formRegister.name"
               label="Name"
@@ -30,6 +30,7 @@
               v-model="formRegister.password"
               label="Password"
               :rules="passwordRules"
+              type="password"
             ></v-text-field>
 
             <v-btn type="submit" block color="#F5821F" rounded class="mt-2">Sign up</v-btn>
@@ -87,6 +88,13 @@ export default {
     }),
 
     methods: {
+      verifyForm() {
+      this.$refs.formRegister.validate().then(response => {
+        if(response.valid){
+          this.userRegister();
+        }
+      })
+    },
       userRegister(){
 
         const headers = { 

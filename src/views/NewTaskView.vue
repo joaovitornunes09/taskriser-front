@@ -6,60 +6,57 @@
       </v-row>
       <v-row>
         <v-sheet width="800" class="mx-auto">
-          <v-form 
-            ref="formTask" 
-            fast-fail 
-            @submit.prevent="verifyForm()" 
-          >
-            <v-row>
-              <v-text-field
-                label="Title"
-                v-model="formNewTask.title"
-                :rules="rules.required"
-              ></v-text-field>
-            </v-row>
-            <v-row class="gap-4 mb-2">
-              <v-select
-                v-model="formNewTask.user"
-                :items="users"
-                item-title="name"
-                item-value="name"
-                label="Assign To"
-                class="w-25"
-              ></v-select>
-              <v-select
-                v-model="formNewTask.visibility"
-                :items="items"
-                item-title="type"
-                item-value="value"
-                :hint="`${formNewTask.visibility.hint}`"
-                label="Visibility"
-                persistent-hint
-                return-object
-              ></v-select>
-            </v-row>
-            <v-row class="mb-2">
-              <v-text-field
-                type="date"
-                label="Complete until"
-                v-model="formNewTask.complete_until"
-                hint="Set a deadline for this task."
-                persistent-hint
-              ></v-text-field>
-            </v-row>
-            <v-row>
-              <v-textarea
-                v-model="formNewTask.description"
-                label="Description"
-                auto-grow
-                rows="3"
-                row-height="25"
-                width="800"
-                :rules="rules.required"
-              ></v-textarea>
-            </v-row>
-
-            <v-btn type="submit" block  color="#F5821F" rounded class="mt-2"
+          <v-form ref="formTask" fast-fail @submit.prevent="verifyForm()">
+            <div id="form-fields">
+              <v-row>
+                <v-text-field
+                  label="Title"
+                  v-model="formNewTask.title"
+                  :rules="rules.required"
+                ></v-text-field>
+              </v-row>
+              <v-row class="gap-4 mb-2">
+                <v-select
+                  v-model="formNewTask.user"
+                  :items="users"
+                  item-title="name"
+                  item-value="name"
+                  label="Assign To"
+                  class="w-25"
+                ></v-select>
+                <v-select
+                  v-model="formNewTask.visibility"
+                  :items="items"
+                  item-title="type"
+                  item-value="value"
+                  :hint="`${formNewTask.visibility.hint}`"
+                  label="Visibility"
+                  persistent-hint
+                  return-object
+                ></v-select>
+              </v-row>
+              <v-row class="mb-2">
+                <v-text-field
+                  type="date"
+                  label="Complete until"
+                  v-model="formNewTask.complete_until"
+                  hint="Set a deadline for this task."
+                  persistent-hint
+                ></v-text-field>
+              </v-row>
+              <v-row>
+                <v-textarea
+                  v-model="formNewTask.description"
+                  label="Description"
+                  auto-grow
+                  rows="3"
+                  row-height="25"
+                  width="800"
+                  :rules="rules.required"
+                ></v-textarea>
+              </v-row>
+            </div>
+            <v-btn type="submit" id="submitTask" block color="#F5821F" rounded class="mt-2"
               >Create</v-btn
             >
           </v-form>
@@ -81,7 +78,6 @@ export default {
   name: "NewTaskView",
   data() {
     return {
-      
       items: [
         {
           type: "Default",
@@ -95,7 +91,7 @@ export default {
           hint: "This will make this task visible to all application users. ",
         },
       ],
-      
+
       rules: {
         required: [
           (value) => {
@@ -111,19 +107,19 @@ export default {
           type: "Default",
           value: false,
           hint:
-          "This will make this task visible only to you and whoever you assigned it.",
+            "This will make this task visible only to you and whoever you assigned it.",
         },
         description: "",
         user: "",
         status: 1,
-        complete_until: ""
-      }
+        complete_until: "",
+      },
     };
   },
   computed: {
-    users(){
+    users() {
       return store.state.users;
-    }
+    },
   },
   methods: {
     changeLinks() {
@@ -153,22 +149,22 @@ export default {
             });
         }
       }
-      
     },
-    getCurrentDate(){
-      this.$store.dispatch("getCurrentDate")
+    getCurrentDate() {
+      this.$store.dispatch("getCurrentDate");
     },
 
     verifyForm() {
-      this.$refs.formTask.validate().then(response => {
-        if(response.valid){
+      this.$refs.formTask.validate().then((response) => {
+        if (response.valid) {
           this.createNewTask();
         }
-      })
+      });
     },
 
     createNewTask() {
-     
+      const buttonSubmit = document.getElementById("submitTask");
+      buttonSubmit.disabled = true;
       const taskData = {
         title: this.formNewTask.title,
         description: this.formNewTask.description,
@@ -177,35 +173,36 @@ export default {
         complete_until: this.formNewTask.complete_until,
         assigned_to: this.formNewTask.user,
       };
-      
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("access_token")}`,
         Accept: "application/json",
       };
-        api
-          .post("/task/register", JSON.stringify(taskData), {
-            headers: headers,
-          })
-          .then((response) => {
-            if (response.data.data.status) {
-              this.$swal({
-                icon: "success",
-                title: "Task created successfully.",
-                text: `Welcome ${response.data.data.name}!`,
-                timer: 2000,
-              }).then(() => {
-                this.$refs.formTask.resetValidation();
-              });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
+      api
+        .post("/task/register", JSON.stringify(taskData), {
+          headers: headers,
+        })
+        .then((response) => {
+          if (response.data.data.status) {
+            
             this.$swal({
+              icon: "success",
+              title: "Task created successfully.",
+              text: `Welcome ${response.data.data.name}!`,
+              timer: 2000,
+            }).then(() => {
+              this.$router.go();
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
             icon: "error",
-            title: error.response.data.message
-          }).then(()=> {
-            if(error.response.status === 401 ){
+            title: error.response.data.message,
+          }).then(() => {
+            buttonSubmit.disabled = false;
+            if (error.response.status === 401) {
               Cookies.remove("access_token");
               Cookies.remove("user_type");
               Cookies.remove("user_id");
@@ -215,7 +212,7 @@ export default {
               this.$router.push({ name: "login" });
             }
           });
-          });
+        });
     },
   },
   beforeMount() {

@@ -1,6 +1,6 @@
 <template>
-  <div class="mb-8">
-    <v-toolbar :elevation="8">
+  <div class="mb-8 layout" style="">
+    <v-toolbar :elevation="8" >
       <v-toolbar-side-icon>
         <router-link :to="linkImage">
           <v-img style="margin-left: 16px;"  :src="require('@/assets/logo_fabricainfo.png')" height="30px" width="120"> </v-img>
@@ -9,7 +9,7 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <nav v-for="link in links" :key="link.name" style="display: flex;">
-          <router-link :to="link.path !== '/' ? link.path : ''" >
+          <router-link :to="link.path" >
             <v-btn :title="link.name" @click="link.name === 'Logout' ? logout() : ''">
               {{ link.icon ? "" : link.name  }}
               <v-icon v-if="link.icon" size="large">{{ link.icon}}</v-icon>

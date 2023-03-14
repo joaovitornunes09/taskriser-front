@@ -1,19 +1,27 @@
-:root{
+:root {
     --orange-color: #F5821F;
-    --text-color:  #000000;
+    --text-color: #000000;
 }
-body{
+
+body {
     padding-right: 0 !important;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-h1{
+h1 {
     color: #f5821f;
 }
 
-.btn-back{
+.btn-back {
     background-color: #F44336 !important;
-  }
+}
+
+.layout {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+}
