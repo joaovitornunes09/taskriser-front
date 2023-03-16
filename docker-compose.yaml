@@ -3,7 +3,7 @@ version: '3'
 services:
   node:
     container_name: teste-fbinfo-front
-    image: node:12
+    build: .
     restart: unless-stopped
     ports:
       - '9005:8080'
