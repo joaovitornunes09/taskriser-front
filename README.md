@@ -31,7 +31,7 @@ Com o Docker-compose instalado, execute esse comando na raiz do projeto:
 
 
 ```sh
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 Pronto, a sua aplicação estará rodando na porta 9005.
