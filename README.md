@@ -9,14 +9,14 @@
 
 ## Instalação
 
-##### Requisito obrigátorio
+##### Requisito obrigatório
 Antes de tudo você precisa ter o docker e o docker-compose e também o git.
 Caso não tenha instalado, aqui alguns links de referência:
 - Aqui encontrar os passos para instalação do Docker => https://docs.docker.com/get-docker/ 
 - Aqui encontrar os passos para instalação do Docker Compose => https://docs.docker.com/compose/ 
 - Aqui encontrar os passos para instalação do git => https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-Além disso para você pode usufruir de todos os serviços da aplicação é necessário que você também tenha o backend instalado na sua maquina.
+Além disso para que você possa usufruir de todos os serviços da aplicação é necessário que você também tenha o backend instalado na sua maquina.
 - Aqui você encontra o repositório e o passo a passo para fazer a instalação 
 deste backend => https://github.com/joaovitornunes09/teste-fbinfo-back
 
