@@ -3,11 +3,15 @@ version: '3'
 services:
   node:
     container_name: teste-fbinfo-front
-    build: .
-    restart: unless-stopped
+    image: node:12
     ports:
       - '9005:8080'
     volumes:
       - ./:/srv/app
     working_dir: /srv/app
-    command: 'npm run serve'
+    command: >
+      bash -c "npm install && npm run serve"
+      
+      
+      
+      
