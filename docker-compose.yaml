@@ -4,10 +4,14 @@ services:
   node:
     container_name: taskriser
     image: node:12
-    restart: unless-stopped
     ports:
       - '9005:8080'
     volumes:
       - ./:/srv/app
     working_dir: /srv/app
-    command: 'npm run serve'
+    command: >
+      bash -c "npm install && npm run serve"
+      
+      
+      
+      
