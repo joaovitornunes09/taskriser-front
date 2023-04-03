@@ -3,7 +3,7 @@
     <v-toolbar :elevation="8" >
       <v-toolbar-side-icon>
         <router-link :to="linkImage">
-          <v-img style="margin-left: 16px;"  :src="require('@/assets/logo_fabricainfo.png')" height="30px" width="120"> </v-img>
+          <v-img style="margin-left: 16px;"  :src="require('@/assets/taskriser.png')" height="30px" width="120px"> </v-img>
         </router-link>
       </v-toolbar-side-icon>
       <v-spacer></v-spacer>
