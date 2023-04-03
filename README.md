@@ -1,4 +1,4 @@
-#### Front Teste Fabrica Info - Admnistrador de Tarefas -------> João Vitor Raulino Nunes
+#### Front TaskRiser - Admnistrador de Tarefas -------> João Vitor Raulino Nunes
 
 ##### Sobre tecnologias utilizadas nesse projeto:
 - Vue 3.2.36

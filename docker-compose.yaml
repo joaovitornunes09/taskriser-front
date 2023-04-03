@@ -2,7 +2,7 @@ version: '3'
 
 services:
   node:
-    container_name: teste-fbinfo-front
+    container_name: taskriser
     image: node:12
     restart: unless-stopped
     ports:
